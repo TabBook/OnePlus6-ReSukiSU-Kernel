@@ -1,0 +1,55 @@
+diff --git a/arch/arm64/configs/enchilada_defconfig b/arch/arm64/configs/enchilada_defconfig
+index 826ca34db..2bf23f91c 100644
+--- a/arch/arm64/configs/enchilada_defconfig
++++ b/arch/arm64/configs/enchilada_defconfig
+@@ -35,7 +35,8 @@ CONFIG_INITRAMFS_IGNORE_SKIP_FLAG=y
+ # CONFIG_RD_XZ is not set
+ # CONFIG_RD_LZO is not set
+ # CONFIG_RD_LZ4 is not set
+-CONFIG_CC_OPTIMIZE_FOR_SIZE=y
++# v3: optimize for performance (-O2) instead of size (-Os)
++CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE=y
+ CONFIG_KALLSYMS_ALL=y
+ CONFIG_BPF_SYSCALL=y
+ CONFIG_EMBEDDED=y
+@@ -634,7 +635,7 @@ CONFIG_PRINTK_TIME=y
+ CONFIG_DEBUG_INFO=y
+ CONFIG_MAGIC_SYSRQ=y
+ CONFIG_PANIC_TIMEOUT=5
+-CONFIG_SCHEDSTATS=y
++# CONFIG_SCHEDSTATS is not set
+ # CONFIG_DEBUG_PREEMPT is not set
+ CONFIG_IPC_LOGGING=y
+ CONFIG_CPU_FREQ_SWITCH_PROFILER=y
+@@ -664,3 +665,31 @@ CONFIG_CRYPTO_AES_ARM64_CE_BLK=y
+ CONFIG_CRYPTO_AES_ARM64_NEON_BLK=y
+ CONFIG_CRYPTO_CRC32_ARM64=y
+ CONFIG_QMI_ENCDEC=y
++
++# ReSukiSU (KernelSU) root support - manual hook (non-GKI 4.9)
++CONFIG_KSU=y
++CONFIG_KSU_MANUAL_HOOK=y
++# v2: only trust the ReSukiSU manager (drop MKSU/RKSU/KOWSU/SukiSU-Ultra)
++# CONFIG_KSU_MULTI_MANAGER_SUPPORT is not set
++
++# v2: balanced power/scheduling - boot with schedutil (EAS) instead of
++# the performance governor; userspace still sets the runtime governor.
++CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL=y
++
++# v3: fixed kernel version string -> 4.9.337-byVoLResukisu
++# (LOCALVERSION_AUTO off + empty .scmversion suppress the git -g..-dirty suffix)
++CONFIG_LOCALVERSION="-byVoLResukisu"
++# CONFIG_LOCALVERSION_AUTO is not set
++
++# v3: TCP BBR congestion control + fair-queue qdisc (better throughput/latency
++# on wifi and mobile data); make BBR the kernel default congestion algorithm.
++# TCP_CONG_ADVANCED must be on to expose the individual algorithms.
++CONFIG_TCP_CONG_ADVANCED=y
++CONFIG_TCP_CONG_BBR=y
++CONFIG_NET_SCH_FQ=y
++CONFIG_DEFAULT_BBR=y
++
++# v3: extra zram compression backends so userspace can pick zstd (better ratio)
++# or lz4 (faster) instead of the default lzo.
++CONFIG_CRYPTO_LZ4=y
++CONFIG_CRYPTO_ZSTD=y
